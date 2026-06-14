@@ -2,6 +2,8 @@ export interface Project {
   id: string;
   name: string;
   fullName: string;
+  owner: string;
+  ownerAvatar: string;
   description: string;
   stars: number;
   language: string;
@@ -27,6 +29,10 @@ export interface GitHubRepo {
   id: number;
   name: string;
   full_name: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
   description: string | null;
   stargazers_count: number;
   language: string | null;

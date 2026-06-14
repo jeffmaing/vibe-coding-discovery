@@ -66,6 +66,8 @@ export function transformRepoToProject(repo: GitHubRepo): Project {
     id: repo.full_name,
     name: repo.name,
     fullName: repo.full_name,
+    owner: repo.owner.login,
+    ownerAvatar: repo.owner.avatar_url,
     description: repo.description || '暂无描述',
     stars: repo.stargazers_count,
     language: repo.language || 'Unknown',

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { Project } from '@/types';
 
@@ -12,33 +13,7 @@ function formatStars(num: number): string {
   return num.toString();
 }
 
-function getInitial(name: string): string {
-  const trimmed = name.trim();
-  if (!trimmed) return '?';
-  return trimmed.charAt(0).toUpperCase();
-}
-
-function getAvatarGradient(name: string): string {
-  const gradients = [
-    'from-[#0A84FF] to-[#0064D4]',
-    'from-[#BF5AF2] to-[#8E2DCA]',
-    'from-[#FF375F] to-[#C22046]',
-    'from-[#FF9F0A] to-[#C26C00]',
-    'from-[#30D158] to-[#1F9A3D]',
-    'from-[#64D2FF] to-[#2A9FC2]',
-    'from-[#5E5CE6] to-[#3A36A8]',
-  ];
-  let hash = 0;
-  for (let i = 0; i < name.length; i += 1) {
-    hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
-  }
-  return gradients[hash % gradients.length];
-}
-
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const initial = getInitial(project.name);
-  const gradient = getAvatarGradient(project.name);
-
   return (
     <Link
       href={project.htmlUrl}
@@ -47,11 +22,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       className="group block h-[280px] bg-white rounded-apple border border-apple-border p-6 flex flex-col transition-all duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.04)] hover:border-apple-border/80"
     >
       <div className="flex items-start justify-between mb-5">
-        <div
-          className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${gradient} text-white text-2xl font-semibold flex items-center justify-center shadow-sm`}
-          aria-hidden="true"
-        >
-          {initial}
+        <div className="relative h-16 w-16 rounded-2xl overflow-hidden bg-apple-bg flex items-center justify-center">
+          <Image
+            src={project.ownerAvatar}
+            alt={`${project.owner} avatar`}
+            width={64}
+            height={64}
+            className="object-cover"
+          />
         </div>
         <span className="inline-flex items-center gap-1 text-[12px] text-apple-gray">
           <svg
