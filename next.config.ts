@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["http://192.168.31.26:3000", "http://localhost:3000"],
+  allowedDevOrigins: true, // 允许所有来源（开发环境）
 };
 
 export default nextConfig;
