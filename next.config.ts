@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: true, // 允许所有来源（开发环境）
+  // allowedDevOrigins 仅用于开发环境，生产环境不需要
 };
 
 export default nextConfig;
