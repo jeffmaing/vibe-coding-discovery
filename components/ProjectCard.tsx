@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Project } from '@/types';
@@ -15,19 +17,14 @@ function formatStars(num: number): string {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <Link
-      href={project.htmlUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block h-[280px] bg-white rounded-apple border border-apple-border p-6 flex flex-col transition-all duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.04)] hover:border-apple-border/80"
-    >
-      <div className="flex items-start justify-between mb-5">
-        <div className="relative h-16 w-16 rounded-2xl overflow-hidden bg-apple-bg flex items-center justify-center">
+    <div className="group h-[300px] bg-white rounded-apple border border-apple-border p-6 flex flex-col transition-all duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.04)] hover:border-apple-border/80">
+      <div className="flex items-start justify-between mb-4">
+        <div className="relative h-14 w-14 rounded-2xl overflow-hidden bg-apple-bg flex items-center justify-center">
           <Image
             src={project.ownerAvatar}
             alt={`${project.owner} avatar`}
-            width={64}
-            height={64}
+            width={56}
+            height={56}
             className="object-cover"
           />
         </div>
@@ -44,14 +41,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </span>
       </div>
 
-      <h3 className="text-[16px] font-semibold tracking-tight text-apple-ink truncate">
+      <h3 className="text-[15px] font-semibold tracking-tight text-apple-ink truncate">
         {project.name}
       </h3>
-      <p className="mt-2 text-[14px] leading-[1.45] text-apple-gray line-clamp-2 flex-1">
+      <p className="mt-1.5 text-[13px] leading-[1.45] text-apple-gray line-clamp-2 flex-1">
         {project.description}
       </p>
 
-      <div className="mt-4 flex items-center gap-2 text-[12px] text-apple-gray">
+      <div className="mt-3 flex items-center gap-2 text-[12px] text-apple-gray">
         <span className="inline-flex items-center gap-1">
           <span
             className="inline-block h-2 w-2 rounded-full"
@@ -63,6 +60,26 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         <span className="text-apple-border">·</span>
         <span className="truncate">{project.topics?.[0] || '开源'}</span>
       </div>
-    </Link>
+
+      <div className="mt-4 flex gap-2">
+        <Link
+          href={project.htmlUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-1 text-center py-2 text-[12px] font-medium text-apple-ink bg-apple-bgSecondary rounded-pill hover:bg-white hover:ring-1 hover:ring-apple-border transition"
+        >
+          查看项目
+        </Link>
+        <button
+          onClick={() => {
+            const prompt = `参考这个 GitHub 项目 ${project.htmlUrl}，帮我做一个类似的项目`;
+            navigator.clipboard.writeText(prompt);
+          }}
+          className="flex-1 text-center py-2 text-[12px] font-medium text-white bg-apple-ink rounded-pill hover:bg-apple-ink/90 transition"
+        >
+          Claude Code
+        </button>
+      </div>
+    </div>
   );
 }

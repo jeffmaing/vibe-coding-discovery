@@ -21,6 +21,7 @@ export interface Project {
 export interface Category {
   id: string;
   name: string;
+  description: string;
   keywords: string[];
   icon: string;
 }
