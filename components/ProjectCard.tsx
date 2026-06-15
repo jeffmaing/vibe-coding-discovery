@@ -17,7 +17,7 @@ function formatStars(num: number): string {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   return (
-    <div className="group h-[300px] bg-white rounded-apple border border-apple-border p-6 flex flex-col transition-all duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.04)] hover:border-apple-border/80">
+    <div className="group bg-white rounded-apple border border-apple-border p-5 flex flex-col transition-all duration-300 ease-apple hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(0,0,0,0.04)] hover:border-apple-border/80">
       <div className="flex items-start justify-between mb-4">
         <div className="relative h-14 w-14 rounded-2xl overflow-hidden bg-apple-bg flex items-center justify-center">
           <Image

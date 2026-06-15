@@ -24,29 +24,16 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative pt-12 bg-white">
-      <div className="max-w-content mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-20 text-center">
+    <section className="relative bg-white">
+      <div className="max-w-content mx-auto px-6 pt-8 pb-12 md:pt-12 md:pb-16 text-center">
         <ScrollReveal delay={0}>
-          <p className="text-[14px] md:text-[15px] font-medium text-apple-blue tracking-wide uppercase mb-4">
-            Vibe Coding 发现
-          </p>
-        </ScrollReveal>
-
-        <ScrollReveal delay={80}>
-          <h1 className="text-[36px] md:text-[52px] leading-[1.1] font-semibold tracking-tight text-apple-ink text-balance">
+          <h1 className="text-[28px] md:text-[36px] leading-[1.15] font-semibold tracking-tight text-apple-ink text-balance">
             想做个项目？<br className="hidden md:block" />先看看别人怎么做的
           </h1>
         </ScrollReveal>
 
-        <ScrollReveal delay={160}>
-          <p className="mt-5 text-[17px] md:text-[21px] font-normal text-apple-gray max-w-2xl mx-auto text-balance">
-            告诉 AI 你的想法，推荐最适合参考的开源项目<br className="hidden md:block" />
-            支持 Claude Code / Cursor / Hermes Skills 一键搭建
-          </p>
-        </ScrollReveal>
-
-        <ScrollReveal delay={240}>
-          <form onSubmit={submitSearch} className="mt-10 max-w-[600px] mx-auto">
+        <ScrollReveal delay={80}>
+          <form onSubmit={submitSearch} className="mt-6 max-w-[600px] mx-auto">
             <div className="relative">
               <svg
                 aria-hidden="true"
@@ -66,20 +53,23 @@ export default function Hero() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="我想做一个..."
-                className="w-full h-14 pl-14 pr-6 text-[17px] bg-apple-bgSecondary rounded-pill placeholder:text-apple-gray focus:outline-none focus:bg-white focus:ring-4 focus:ring-apple-blueSoft transition"
+                className="w-full h-12 pl-14 pr-20 text-[15px] bg-apple-bgSecondary rounded-pill placeholder:text-apple-gray focus:outline-none focus:bg-white focus:ring-4 focus:ring-apple-blueSoft transition"
                 aria-label="搜索项目"
               />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:inline-flex items-center gap-1 text-[12px] text-apple-gray bg-white border border-apple-border rounded px-2 py-0.5 pointer-events-none">
+                <span>⌘K</span>
+              </span>
             </div>
           </form>
         </ScrollReveal>
 
-        <ScrollReveal delay={320}>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <ScrollReveal delay={160}>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
             {quickTags.map((tag) => (
               <Link
                 key={tag.href}
                 href={tag.href}
-                className="px-4 py-2 text-[14px] text-apple-ink bg-apple-bgSecondary rounded-pill hover:bg-white hover:ring-1 hover:ring-apple-border transition"
+                className="px-4 py-1.5 text-[13px] text-apple-ink bg-apple-bgSecondary rounded-pill hover:bg-white hover:ring-1 hover:ring-apple-border transition"
               >
                 {tag.label}
               </Link>

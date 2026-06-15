@@ -61,6 +61,22 @@ export async function searchRepos(query: string): Promise<GitHubRepo[]> {
   return data.items || [];
 }
 
+export async function fetchRepoByFullName(fullName: string): Promise<GitHubRepo | null> {
+  try {
+    const response = await fetch(`${GITHUB_API_BASE}/repos/${fullName}`, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+      },
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
 export function transformRepoToProject(repo: GitHubRepo): Project {
   return {
     id: repo.full_name,

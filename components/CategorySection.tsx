@@ -8,7 +8,6 @@ interface CategorySectionProps {
   title: string;
   subtitle: string;
   projects: Project[];
-  variant?: 'light' | 'gray';
 }
 
 export default function CategorySection({
@@ -16,30 +15,27 @@ export default function CategorySection({
   title,
   subtitle,
   projects,
-  variant = 'light',
 }: CategorySectionProps) {
-  const bg = variant === 'light' ? 'bg-white' : 'bg-apple-bgSecondary';
-
   if (!projects || projects.length === 0) {
     return null;
   }
 
   return (
-    <section className={`${bg} py-20 md:py-24`}>
+    <section className="bg-white py-16">
       <div className="max-w-content mx-auto px-6">
         <ScrollReveal>
-          <div className="flex items-end justify-between gap-6 mb-10">
+          <div className="flex items-end justify-between gap-6 mb-8">
             <div>
-              <h2 className="text-[28px] md:text-[32px] font-semibold tracking-tight text-apple-ink leading-tight">
+              <h2 className="text-[24px] md:text-[28px] font-semibold tracking-tight text-apple-ink leading-tight">
                 {title}
               </h2>
-              <p className="mt-2 text-[16px] md:text-[18px] text-apple-gray">
+              <p className="mt-1.5 text-[15px] md:text-[16px] text-apple-gray">
                 {subtitle}
               </p>
             </div>
             <Link
               href={`/category/${id}`}
-              className="group inline-flex items-center gap-1 text-[15px] md:text-[16px] text-apple-blue font-medium whitespace-nowrap"
+              className="group inline-flex items-center gap-1 text-[14px] md:text-[15px] text-apple-blue font-medium whitespace-nowrap"
             >
               查看全部
               <svg
@@ -59,8 +55,8 @@ export default function CategorySection({
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {projects.slice(0, 5).map((project, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {projects.slice(0, 4).map((project, idx) => (
             <ScrollReveal key={project.id} delay={idx * 80}>
               <ProjectCard project={project} />
             </ScrollReveal>
