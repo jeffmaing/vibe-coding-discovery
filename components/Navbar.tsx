@@ -2,61 +2,64 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
+const links = [
+  { href: '/', label: 'NOW' },
+  { href: '/#inspiration', label: '灵感' },
+  { href: '/#projects', label: '作品' },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  const submitSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      window.location.href = `/?q=${encodeURIComponent(query.trim())}`;
-    }
-  };
+  useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-12 bg-white/70 backdrop-blur-xl border-b border-apple-border/60">
-      <nav className="max-w-content mx-auto h-full px-6 flex items-center justify-between gap-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-apple-ink"
-        >
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-apple-ink text-white text-[11px] font-bold">
-            V
-          </span>
-          <span>Vibe Coding</span>
+    <header className="site-header">
+      <nav className="site-nav" aria-label="主导航">
+        <Link href="/" className="brand-wordmark">
+          Vibe yourself
         </Link>
 
-        <form onSubmit={submitSearch} className="flex-1 max-w-[320px]">
-          <div className="relative">
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-apple-gray pointer-events-none"
+        <div className="desktop-nav">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={pathname === '/' && link.label === 'NOW' ? 'active' : ''}
             >
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="搜索项目"
-              className="w-full h-8 pl-9 pr-3 text-[13px] bg-apple-bgSecondary rounded-pill placeholder:text-apple-gray focus:outline-none focus:bg-white focus:ring-4 focus:ring-apple-blueSoft transition"
-            />
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        <Link href="/make" className="nav-cta">
+          做点什么
+        </Link>
+
+        <button
+          type="button"
+          className="mobile-menu-button"
+          aria-label={open ? '关闭菜单' : '打开菜单'}
+          aria-expanded={open}
+          onClick={() => setOpen((value) => !value)}
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
+        </button>
+
+        {open && (
+          <div className="mobile-nav">
+            {links.map((link) => (
+              <Link key={link.href} href={link.href}>
+                {link.label}
+              </Link>
+            ))}
+            <Link href="/make">做点什么</Link>
           </div>
-        </form>
+        )}
       </nav>
     </header>
   );
