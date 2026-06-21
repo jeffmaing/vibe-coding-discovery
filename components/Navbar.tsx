@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 
 const links = [
   { href: '/', label: 'NOW' },
-  { href: '/#inspiration', label: '灵感' },
-  { href: '/#projects', label: '作品' },
+  { href: '/inspiration', label: '灵感' },
+  { href: '/projects', label: '作品' },
 ];
 
 export default function Navbar() {
@@ -29,7 +29,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={pathname === '/' && link.label === 'NOW' ? 'active' : ''}
+              className={pathname === link.href ? 'active' : ''}
             >
               {link.label}
             </Link>
