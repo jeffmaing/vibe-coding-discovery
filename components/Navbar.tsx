@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -12,15 +11,24 @@ const links = [
 ];
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const [currentPath, setCurrentPath] = useState('');
   const [open, setOpen] = useState(false);
 
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
+
+  useEffect(() => setOpen(false), [currentPath]);
 
   // 检查当前路径是否匹配链接
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/' || pathname === '/vibe-coding-discovery' || pathname === '/vibe-coding-discovery/';
-    return pathname.includes(href);
+    if (href === '/') {
+      return currentPath === '/' || 
+             currentPath === '/vibe-coding-discovery' || 
+             currentPath === '/vibe-coding-discovery/' ||
+             currentPath.endsWith('/vibe-coding-discovery/');
+    }
+    return currentPath.includes(href);
   };
 
   return (
