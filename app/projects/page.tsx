@@ -1,24 +1,68 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ExternalLink, Github } from 'lucide-react';
-import { fetchCurrentMovementRepos, transformRepoToProject } from '@/lib/github';
-import { formatNumber } from '@/lib/utils';
 import type { Project } from '@/types';
 
-export const revalidate = 1800;
+export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function ProjectsPage() {
-  let projects: Project[] = [];
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const createdAfter = new Date();
+        createdAfter.setMonth(createdAfter.getMonth() - 18);
+        const pushedAfter = new Date();
+        pushedAfter.setMonth(pushedAfter.getMonth() - 4);
 
-  try {
-    const repos = await fetchCurrentMovementRepos();
-    projects = repos.map(transformRepoToProject).filter(p => p.demoUrl);
-  } catch {
-    projects = [];
-  }
+        const response = await fetch(
+          `https://api.github.com/search/repositories?q=stars:>100+created:>${createdAfter.toISOString().slice(0, 10)}+pushed:>${pushedAfter.toISOString().slice(0, 10)}+archived:false&sort=stars&order=desc&per_page=30`,
+          {
+            headers: { Accept: 'application/vnd.github.v3+json' },
+          }
+        );
 
-  // 按stars排序
-  projects.sort((a, b) => b.stars - a.stars);
+        if (!response.ok) throw new Error('Failed to fetch');
+
+        const data = await response.json();
+
+        // 转换为Project格式，只保留有demo的项目
+        const transformed: Project[] = data.items
+          .filter((repo: any) => repo.homepage)
+          .map((repo: any) => ({
+            id: repo.full_name,
+            name: repo.name,
+            fullName: repo.full_name,
+            owner: repo.owner.login,
+            ownerAvatar: repo.owner.avatar_url,
+            description: repo.description || '暂无描述',
+            stars: repo.stargazers_count,
+            language: repo.language || 'Unknown',
+            topics: repo.topics || [],
+            difficulty: 'medium',
+            demoUrl: repo.homepage,
+            category: 'other',
+            trendingScore: 0,
+            createdAt: repo.created_at,
+            updatedAt: repo.updated_at,
+            htmlUrl: repo.html_url,
+          }));
+
+        // 按stars排序
+        transformed.sort((a, b) => b.stars - a.stars);
+        setProjects(transformed);
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProjects();
+  }, []);
 
   return (
     <main className="projects-page">
@@ -38,14 +82,19 @@ export default async function ProjectsPage() {
 
       {/* Projects List */}
       <section className="projects-list">
-        {projects.length > 0 ? (
+        {loading ? (
+          <div className="projects-loading">
+            <ExternalLink size={32} className="loading-icon" />
+            <p>正在从 GitHub 获取最新数据...</p>
+          </div>
+        ) : projects.length > 0 ? (
           <div className="projects-grid">
             {projects.map((project, index) => (
               <article key={project.id} className="project-item" style={{ animationDelay: `${index * 50}ms` }}>
                 <div className="project-item-rank">
                   <span>#{index + 1}</span>
                 </div>
-                
+
                 <div className="project-item-avatar">
                   <Image
                     src={project.ownerAvatar}
@@ -116,4 +165,11 @@ export default async function ProjectsPage() {
       </section>
     </main>
   );
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}k`;
+  }
+  return num.toString();
 }

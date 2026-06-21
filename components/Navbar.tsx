@@ -17,6 +17,12 @@ export default function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // 检查当前路径是否匹配链接
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/' || pathname === '/vibe-coding-discovery' || pathname === '/vibe-coding-discovery/';
+    return pathname.includes(href);
+  };
+
   return (
     <header className="site-header">
       <nav className="site-nav" aria-label="主导航">
@@ -29,7 +35,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={pathname === link.href ? 'active' : ''}
+              className={isActive(link.href) ? 'active' : ''}
             >
               {link.label}
             </Link>
