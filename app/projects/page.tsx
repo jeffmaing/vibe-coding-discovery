@@ -3,8 +3,46 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ExternalLink, Github } from 'lucide-react';
+import { ArrowRight, ExternalLink } from 'lucide-react';
 import type { Project } from '@/types';
+
+function formatNumber(num: number): string {
+  if (num >= 1000) return `${(num / 1000).toFixed(num >= 10000 ? 0 : 1)}k`;
+  return num.toString();
+}
+
+const storyLines = [
+  '可以直接体验',
+  '从灵感到作品',
+  '做出你自己的',
+  '看看别人怎么做的',
+  '灵感从这里开始',
+];
+
+function ProjectCard({ project, index, className = '' }: { project: Project; index: number; className?: string }) {
+  return (
+    <Link
+      href={`/project/${encodeURIComponent(project.fullName)}`}
+      className={`story-card ${className}`}
+    >
+      <span className="story-mark" aria-hidden="true">{project.name.slice(0, 2)}</span>
+      <Image
+        src={project.ownerAvatar}
+        alt={`${project.owner} 的头像`}
+        fill
+        sizes="(max-width: 768px) 88vw, 23vw"
+        loading={index < 4 ? 'eager' : 'lazy'}
+      />
+      <span className="story-scrim" />
+      <span className="story-copy">
+        <small>{project.language}</small>
+        <strong>{project.name}</strong>
+        <span>{storyLines[index % storyLines.length]}</span>
+        <em>{formatNumber(project.stars)} stars</em>
+      </span>
+    </Link>
+  );
+}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -20,16 +58,11 @@ export default function ProjectsPage() {
 
         const response = await fetch(
           `https://api.github.com/search/repositories?q=stars:>100+created:>${createdAfter.toISOString().slice(0, 10)}+pushed:>${pushedAfter.toISOString().slice(0, 10)}+archived:false&sort=stars&order=desc&per_page=30`,
-          {
-            headers: { Accept: 'application/vnd.github.v3+json' },
-          }
+          { headers: { Accept: 'application/vnd.github.v3+json' } }
         );
-
         if (!response.ok) throw new Error('Failed to fetch');
-
         const data = await response.json();
 
-        // 转换为Project格式，只保留有demo的项目
         const transformed: Project[] = data.items
           .filter((repo: any) => repo.homepage)
           .map((repo: any) => ({
@@ -51,7 +84,6 @@ export default function ProjectsPage() {
             htmlUrl: repo.html_url,
           }));
 
-        // 按stars排序
         transformed.sort((a, b) => b.stars - a.stars);
         setProjects(transformed);
       } catch (error) {
@@ -60,116 +92,63 @@ export default function ProjectsPage() {
         setLoading(false);
       }
     }
-
     fetchProjects();
   }, []);
 
   return (
-    <main className="projects-page">
-      {/* Hero Section */}
-      <section className="projects-hero">
-        <div className="projects-hero-content">
-          <div className="projects-badge">
-            <ExternalLink size={18} />
-            <span>作品展示</span>
-          </div>
+    <main className="home-page">
+      {/* Hero */}
+      <section className="home-hero">
+        <div className="hero-copy">
+          <p className="eyebrow">WORKS SHOWCASE</p>
           <h1>看看别人<br />做出了什么</h1>
-          <p className="projects-intro">
-            这些项目都有在线 Demo，可以直接体验。从灵感开始，做出你自己的作品。
-          </p>
+          <p className="hero-intro">这些项目都有在线 Demo，可以直接体验。从灵感开始，做出你自己的作品。</p>
+          <div className="hero-actions">
+            <Link href="/make" className="primary-button">做点什么 <ArrowRight size={18} /></Link>
+            {loading ? (
+              <span className="secondary-button" style={{ opacity: 0.5 }}>加载中...</span>
+            ) : (
+              <span className="secondary-button">{projects.length} 个可体验项目</span>
+            )}
+          </div>
+        </div>
+
+        <div className="hero-gallery" aria-label="作品视觉精选">
+          {loading ? (
+            <div className="trend-empty"><span>作品正在赶来</span><p>正在从 GitHub 获取最新数据...</p></div>
+          ) : projects.length >= 4 ? (
+            <>
+              <ProjectCard project={projects[0]} index={0} className="story-main" />
+              <ProjectCard project={projects[1]} index={1} className="story-top" />
+              <ProjectCard project={projects[2]} index={2} className="story-bottom" />
+              <ProjectCard project={projects[3]} index={3} className="story-edge" />
+            </>
+          ) : (
+            <div className="trend-empty"><span>作品正在赶来</span><p>GitHub 数据暂时不可用，请稍后再来。</p></div>
+          )}
         </div>
       </section>
 
-      {/* Projects List */}
-      <section className="projects-list">
+      {/* Projects Rail */}
+      <section className="trend-section">
+        <div className="trend-heading">
+          <h2>全部作品</h2>
+          {projects.length > 0 && (
+            <span style={{ color: '#888', fontSize: '13px' }}>{projects.length} 个项目</span>
+          )}
+        </div>
         {loading ? (
-          <div className="projects-loading">
-            <ExternalLink size={32} className="loading-icon" />
-            <p>正在从 GitHub 获取最新数据...</p>
-          </div>
+          <div className="trend-empty compact">正在加载...</div>
         ) : projects.length > 0 ? (
-          <div className="projects-grid">
+          <div className="trend-rail">
             {projects.map((project, index) => (
-              <article key={project.id} className="project-item" style={{ animationDelay: `${index * 50}ms` }}>
-                <div className="project-item-rank">
-                  <span>#{index + 1}</span>
-                </div>
-
-                <div className="project-item-avatar">
-                  <Image
-                    src={project.ownerAvatar}
-                    alt={project.owner}
-                    width={56}
-                    height={56}
-                  />
-                </div>
-
-                <div className="project-item-info">
-                  <div className="project-item-header">
-                    <h3>{project.name}</h3>
-                    <span className="project-item-lang">{project.language}</span>
-                  </div>
-                  <p className="project-item-desc">{project.description}</p>
-                  <div className="project-item-meta">
-                    <span className="project-item-owner">@{project.owner}</span>
-                    <span className="project-item-stars">⭐ {formatNumber(project.stars)}</span>
-                  </div>
-                </div>
-
-                <div className="project-item-actions">
-                  <Link
-                    href={`/project/${encodeURIComponent(project.fullName)}`}
-                    className="project-item-btn project-item-btn-detail"
-                  >
-                    详情
-                  </Link>
-                  {project.demoUrl && (
-                    <a
-                      href={project.demoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="project-item-btn project-item-btn-demo"
-                    >
-                      体验 <ExternalLink size={14} />
-                    </a>
-                  )}
-                  <a
-                    href={project.htmlUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="project-item-btn project-item-btn-github"
-                    aria-label="GitHub"
-                  >
-                    <Github size={16} />
-                  </a>
-                </div>
-              </article>
+              <ProjectCard key={project.id} project={project} index={index} />
             ))}
           </div>
         ) : (
-          <div className="projects-empty">
-            <ExternalLink size={48} />
-            <h2>作品正在赶来</h2>
-            <p>GitHub 数据暂时不可用，请稍后再来。</p>
-          </div>
+          <div className="trend-empty compact">暂时没有可展示的项目</div>
         )}
-      </section>
-
-      {/* CTA Section */}
-      <section className="projects-cta">
-        <h2>有了灵感？</h2>
-        <p>从这些作品中获得启发，开始你自己的项目。</p>
-        <Link href="/make" className="projects-cta-btn">
-          做点什么 <ArrowRight size={18} />
-        </Link>
       </section>
     </main>
   );
-}
-
-function formatNumber(num: number): string {
-  if (num >= 1000) {
-    return `${(num / 1000).toFixed(1)}k`;
-  }
-  return num.toString();
 }
