@@ -498,6 +498,8 @@ body > main:not(.home-page):not(.make-page) { padding-top: 72px; }
   font-size: clamp(36px, 6vw, 64px);
   font-weight: 800;
   line-height: 1.1;
+  margin-bottom: 24px;
+}
 
 /* Loading States */
 .inspiration-loading,
