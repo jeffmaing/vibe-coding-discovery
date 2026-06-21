@@ -38,6 +38,29 @@ export async function fetchTrendingRepos(category?: string): Promise<GitHubRepo[
   return data.items || [];
 }
 
+export async function fetchCurrentMovementRepos(): Promise<GitHubRepo[]> {
+  const createdAfter = new Date();
+  createdAfter.setMonth(createdAfter.getMonth() - 18);
+  const pushedAfter = new Date();
+  pushedAfter.setMonth(pushedAfter.getMonth() - 4);
+
+  const queryParams = new URLSearchParams({
+    q: `stars:>100 created:>${createdAfter.toISOString().slice(0, 10)} pushed:>${pushedAfter.toISOString().slice(0, 10)} archived:false`,
+    sort: 'stars',
+    order: 'desc',
+    per_page: '30',
+  });
+
+  const response = await fetch(`${GITHUB_API_BASE}/search/repositories?${queryParams}`, {
+    headers: { Accept: 'application/vnd.github.v3+json' },
+    next: { revalidate: 3600 },
+  });
+
+  if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+  const data = await response.json();
+  return data.items || [];
+}
+
 export async function searchRepos(query: string): Promise<GitHubRepo[]> {
   const queryParams = new URLSearchParams({
     q: `${query} in:name,description,topics`,
